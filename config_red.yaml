@@ -1,0 +1,98 @@
+# --- ARCHIVO DE CONFIGURACIÓN DE INFRAESTRUCTURA COMO CÓDIGO (IaC) ---
+# Define las VLANs, seguridad y asignaciones de interfaces 
+# de forma totalmente declarativa para la red del Proyecto UNAHUR.
+
+red_empresarial:
+  vlans:
+    - id: 10
+      nombre: "VLAN_Administracion"
+    - id: 20
+      nombre: "VLAN_Ventas"
+    - id: 30
+      nombre: "VLAN_Deposito"
+    - id: 65
+      nombre: "RRHH"
+    - id: 99
+      nombre: "VLAN_Gestion_IT"
+
+  seguridad:
+    banner_motd: "ACCESO RESTRINGIDO: Solo personal autorizado. Todas las conexiones son monitoreadas."
+    puertos_inactivos: "shutdown"
+
+  # SECCIÓN CORREGIDA: Mapa real y exacto de interfaces físicas de GNS3
+  configuracion_puertos:
+    "192.168.1.11": # SW-ACCESO-1
+      access:
+        "Ethernet 0/1": 10   # PC1 (Administración)
+        "Ethernet 0/2": 20   # PC2 (Ventas)
+      trunk:
+        - "Ethernet 0/0"     # Enlace real hacia DIST-IOU2
+      inactivos:
+        - "Ethernet 0/3"
+        - "Ethernet 1/1"
+        # NOTA DE SEGURIDAD: Ethernet 1/0 no se apaga - puente a Cloud1 (Windows)
+
+    "192.168.1.12": # SW-ACCESO-2
+      access:
+        "Ethernet 0/1": 10   # PC3 (Administración)
+      trunk:
+        - "Ethernet 0/0"     # Enlace real hacia DIST-IOU2
+      inactivos:
+        - "Ethernet 0/2"
+        - "Ethernet 0/3"
+        - "Ethernet 1/0"
+        - "Ethernet 1/1"
+        - "Ethernet 1/2"
+        - "Ethernet 1/3"
+
+    "192.168.1.13": # SW-ACCESO-3
+      access:
+        "Ethernet 0/1": 20   # PC4 (Ventas)
+      trunk:
+        - "Ethernet 0/0"     # Enlace real hacia DIST-IOU2
+      inactivos:
+        - "Ethernet 0/2"
+        - "Ethernet 0/3"
+        - "Ethernet 1/0"
+        - "Ethernet 1/1"
+        - "Ethernet 1/2"
+        - "Ethernet 1/3"
+
+    "192.168.1.14": # SW-ACCESO-4
+      access:
+        "Ethernet 0/1": 30   # PC5 (Depósito)
+      trunk:
+        - "Ethernet 0/0"     # Enlace real hacia DIST-IOU3
+      inactivos:
+        - "Ethernet 0/2"
+        - "Ethernet 0/3"
+        - "Ethernet 1/0"
+        - "Ethernet 1/1"
+        - "Ethernet 1/2"
+        - "Ethernet 1/3"
+
+    "192.168.1.15": # SW-ACCESO-5
+      access:
+        "Ethernet 0/1": 30   # PC6 (Depósito)
+      trunk:
+        - "Ethernet 0/0"     # Enlace real hacia DIST-IOU3
+      inactivos:
+        - "Ethernet 0/2"
+        - "Ethernet 0/3"
+        - "Ethernet 1/0"
+        - "Ethernet 1/1"
+        - "Ethernet 1/2"
+        - "Ethernet 1/3"
+
+    "192.168.1.16": # SW-ACCESO-6
+      access:
+        "Ethernet 0/0": 99   # PC7 (Gestión)
+        "Ethernet 0/1": 99   # PC8 (Gestión)
+      trunk:
+        - "Ethernet 1/3"     # Enlace real hacia DIST-IOU3
+      inactivos:
+        - "Ethernet 0/2"
+        - "Ethernet 0/3"
+        - "Ethernet 1/0"
+        - "Ethernet 1/1"
+        - "Ethernet 1/2"
